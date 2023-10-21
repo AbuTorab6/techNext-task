@@ -1,4 +1,4 @@
-# nstall the dependency and run the project
+# install the dependency and run the project
 
 - step 1 : open the project file with VS Code
 - step 2 : install dependency : npm install
