@@ -12,6 +12,7 @@ import {
   Group,
   SimpleGrid,
   Image,
+  Pagination,
 } from "@mantine/core";
 import React, { useRef, useState } from "react";
 
@@ -27,11 +28,9 @@ const RocketPage = () => {
   const [byDate, setByDate] = useState<string | null>(null);
   const [byName, setByName] = useState<string | null>(null);
   const [checked, setChecked] = useState(false);
+  const [activePage, setPage] = useState(1);
 
   const name = useRef<HTMLInputElement>(null);
-  // console.log("check box", checked);
-  // console.log("by status", byStatus);
-  // console.log("byDate", byDate);
 
   const { data } = useGetRocket({});
 
@@ -77,12 +76,16 @@ const RocketPage = () => {
     }
   });
 
+  const itemPerPage = 9;
+  const totalPages = Math.ceil((filter?.length as number) / itemPerPage);
+  const start = (activePage - 1) * itemPerPage;
+  const end = start + itemPerPage;
+  const currentData = filter?.slice(start, end);
+
   const searchByName = () => {
     if (name.current !== null) {
       setByName(name.current?.value);
     }
-
-    console.log("rocket name", name.current?.value);
   };
 
   console.log("filter", filter);
@@ -127,7 +130,6 @@ const RocketPage = () => {
           >
             Find out the elaborate features of all the past big spaceflights.
           </Text>
-
           <Flex
             mih={50}
             gap="md"
@@ -225,9 +227,8 @@ const RocketPage = () => {
               />
             </Group>
           </Flex>
-
           <SimpleGrid mt={theme.spacing["16"]} cols={3}>
-            {filter?.map((item, index) => {
+            {currentData?.map((item, index) => {
               return (
                 <Box
                   key={index}
@@ -310,6 +311,19 @@ const RocketPage = () => {
               );
             })}
           </SimpleGrid>
+          <Group
+            sx={{
+              marginTop: theme.spacing["12"],
+            }}
+            position="center"
+          >
+            <Pagination
+              color="blue"
+              value={activePage}
+              onChange={setPage}
+              total={totalPages}
+            />
+          </Group>
         </Container>
       </Box>
     </>
