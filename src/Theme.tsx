@@ -1,23 +1,10 @@
 import {
   MantineThemeOverride,
   MantineTheme,
-  TextProps,
-  NavbarProps,
   NavLinkProps,
   SelectProps,
   ButtonProps,
 } from "@mantine/core";
-
-const getNavbarDefaultProps = (theme: MantineTheme): Partial<NavbarProps> => {
-  return {
-    styles: {
-      root: {
-        backgroundColor: theme.colors.blue[9],
-        top: theme.spacing["0"],
-      },
-    },
-  };
-};
 
 const getNavLinkDefaultProps = (theme: MantineTheme): NavLinkProps => {
   return {
@@ -70,13 +57,23 @@ const getSelectDefaultProps = (theme: MantineTheme): Partial<SelectProps> => {
           fontWeight: 500,
         },
       },
+      root: {},
     },
   };
 };
 
-const getTextDefaultProps = (theme: MantineTheme): TextProps => ({
-  color: theme.colors.blue[7],
+const getTextDefaultProps = (theme: MantineTheme) => ({
+  color: theme.colors.black[1],
+  fontSize: theme.fontSizes["md"],
+  fontWeight: 400,
 });
+
+const getTitleDefaultProps = (theme: MantineTheme) => ({
+  fontSize: theme.fontSizes["4xl"],
+  color: theme.colors.black[0],
+  fontWeight: 500,
+});
+
 const getButtonDefaultProps = (theme: MantineTheme): ButtonProps => ({
   fz: theme.fontSizes["lg"],
   fw: "600",
@@ -91,9 +88,8 @@ const getButtonDefaultProps = (theme: MantineTheme): ButtonProps => ({
 export const theme: MantineThemeOverride = {
   components: {
     Text: { defaultProps: getTextDefaultProps },
-    Navbar: {
-      defaultProps: getNavbarDefaultProps,
-    },
+    Title: { defaultProps: getTitleDefaultProps },
+
     NavLink: {
       defaultProps: getNavLinkDefaultProps,
     },

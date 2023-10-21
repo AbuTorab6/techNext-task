@@ -13,6 +13,7 @@ import {
   SimpleGrid,
   Image,
   Pagination,
+  Loader,
 } from "@mantine/core";
 import React, { useRef, useState } from "react";
 
@@ -32,7 +33,7 @@ const RocketPage = () => {
 
   const name = useRef<HTMLInputElement>(null);
 
-  const { data } = useGetRocket({});
+  const { data, isLoading } = useGetRocket({});
 
   const filter = data?.filter((item) => {
     const statusMap: { [key: string]: boolean } = { true: true, false: false };
@@ -96,7 +97,7 @@ const RocketPage = () => {
         sx={{
           backgroundColor: "white",
           paddingTop: theme.spacing["24"],
-          paddingBottom: theme.spacing["28"],
+          paddingBottom: theme.spacing["6"],
           [theme.fn.smallerThan("md")]: {
             paddingLeft: theme.spacing["5"],
             paddingRight: theme.spacing["5"],
@@ -105,15 +106,11 @@ const RocketPage = () => {
       >
         <Container size={1320}>
           <Title
-            ta="center"
-            fz={theme.fontSizes["4xl"]}
             sx={{
-              color: theme.colors.black[0],
-              fontWeight: 500,
+              textAlign: "center",
+
               [theme.fn.smallerThan("sm")]: {
-                fontSize: theme.fontSizes["4xl"],
-                color: theme.colors.blue[5],
-                fontWeight: 700,
+                textAlign: "left",
               },
             }}
           >
@@ -121,11 +118,11 @@ const RocketPage = () => {
           </Title>
           <Text
             sx={{
-              color: theme.colors.black[1],
-              fontSize: theme.fontSizes["md"],
-              fontWeight: 400,
               textAlign: "center",
               marginTop: theme.spacing["2"],
+              [theme.fn.smallerThan("sm")]: {
+                textAlign: "left",
+              },
             }}
           >
             Find out the elaborate features of all the past big spaceflights.
@@ -137,9 +134,16 @@ const RocketPage = () => {
             align="center"
             direction="row"
             wrap="wrap"
-            sx={{ marginTop: theme.spacing["16"] }}
+            sx={{
+              marginTop: theme.spacing["16"],
+            }}
           >
             <Checkbox
+              sx={{
+                [theme.fn.smallerThan("sm")]: {
+                  display: "none",
+                },
+              }}
               checked={checked}
               onChange={(event) => {
                 setChecked(event.currentTarget.checked);
@@ -152,19 +156,32 @@ const RocketPage = () => {
           </Flex>
           <Flex
             gap="md"
-            justify="space-between"
+            justify={{
+              base: "flex-start",
+              sm: "space-between",
+            }}
+            direction={{ base: "row", sm: "row" }}
+            // justify="space-between"
             align="center"
-            direction="row"
+            // direction="row"
             wrap="wrap"
           >
-            <Group
+            <Flex
               sx={{
                 border: "0.5px solid #CED4DA",
                 borderRadius: theme.spacing["0.5"],
+                [theme.fn.smallerThan("sm")]: {
+                  width: "100%",
+                },
               }}
-              spacing="0px"
+              // spacing="0px"
             >
               <TextInput
+                sx={{
+                  [theme.fn.smallerThan("sm")]: {
+                    width: "100%",
+                  },
+                }}
                 styles={{
                   input: {
                     border: theme.spacing["0"],
@@ -179,9 +196,6 @@ const RocketPage = () => {
                   setByDate(null);
                   setChecked(false);
                 }}
-                // onChange={(event) => {
-                //   setByName(event.currentTarget.value);
-                // }}
               />
               <Button
                 styles={{
@@ -194,9 +208,41 @@ const RocketPage = () => {
               >
                 <IconSearch />
               </Button>
-            </Group>
-            <Group>
+            </Flex>
+
+            <Checkbox
+              sx={{
+                [theme.fn.largerThan("sm")]: {
+                  display: "none",
+                },
+              }}
+              checked={checked}
+              onChange={(event) => {
+                setChecked(event.currentTarget.checked);
+                setByDate(null);
+                setByStatus(null);
+                setByName(null);
+              }}
+              label="Show upcoming only"
+            />
+            <Flex
+              justify={{ base: "flex-start", sm: "flex-start" }}
+              gap="md"
+              direction={{ base: "column", sm: "row" }}
+              sx={{
+                [theme.fn.smallerThan("sm")]: {
+                  width: "100% !important",
+                },
+              }}
+            >
               <Select
+                sx={{
+                  ".mantine-Input-wrapper": {
+                    [theme.fn.smallerThan("sm")]: {
+                      width: "100%",
+                    },
+                  },
+                }}
                 placeholder="By Launch Status"
                 value={byStatus}
                 onChange={(value) => {
@@ -225,91 +271,120 @@ const RocketPage = () => {
                   { value: "year", label: "Last Year" },
                 ]}
               />
-            </Group>
+            </Flex>
           </Flex>
-          <SimpleGrid mt={theme.spacing["16"]} cols={3}>
-            {currentData?.map((item, index) => {
-              return (
-                <Box
-                  key={index}
-                  sx={{
-                    border: "1px solid #CED4DA",
-                    borderRadius: theme.spacing["2"],
-                    padding: theme.spacing["8"],
-                  }}
-                >
-                  <Image
-                    maw={124}
-                    mx="auto"
-                    radius="md"
-                    src={item.links.mission_patch}
-                    alt="Random image"
-                  />
-                  <Text
-                    sx={{
-                      color: theme.colors.black[3],
-                      fontSize: theme.fontSizes["md"],
-                      fontWeight: 400,
-                      textAlign: "center",
-                      marginTop: theme.spacing["10"],
-                    }}
-                  >
-                    Launch Date:{" "}
-                    {moment(item.launch_date_local).format("DD MMM YYYY")}
-                  </Text>
-                  <Text
-                    sx={{
-                      color: theme.colors.black[1],
-                      fontSize: theme.fontSizes["2xl"],
-                      fontWeight: 500,
-                      textAlign: "center",
-                      marginTop: theme.spacing["2"],
-                    }}
-                  >
-                    {item.mission_name}
-                  </Text>
-                  <Text
-                    sx={{
-                      color: theme.colors.black[3],
-                      fontSize: theme.fontSizes["md"],
-                      fontWeight: 400,
-                      textAlign: "center",
-                      marginTop: theme.spacing["0.5"],
-                    }}
-                  >
-                    {item.rocket.rocket_name}
-                  </Text>
-                  <Text
-                    sx={{
-                      color: theme.colors.black[3],
-                      fontSize: theme.fontSizes["md"],
-                      fontWeight: 500,
-                      textAlign: "center",
-                      marginTop: theme.spacing["8"],
-                    }}
-                  >
-                    Launch Status:
-                  </Text>
+          {isLoading && (
+            <>
+              <Flex mih="365px" justify="center" align="center">
+                <Loader />
+              </Flex>
+            </>
+          )}
+          <SimpleGrid
+            breakpoints={[
+              { maxWidth: "md", cols: 2, spacing: "md" },
+              { maxWidth: "sm", cols: 1, spacing: "sm" },
+              { maxWidth: "xs", cols: 1, spacing: "sm" },
+            ]}
+            mt={theme.spacing["16"]}
+            cols={3}
+          >
+            {currentData?.length === 0 ? (
+              <Title
+                sx={{
+                  textAlign: "center",
+                  color: theme.colors.black[3],
+                  fontSize: theme.fontSizes["3xl"],
+                  [theme.fn.smallerThan("sm")]: {
+                    fontSize: theme.fontSizes["3xl"],
+                    color: theme.colors.black[0],
+                    fontWeight: 300,
+                  },
+                }}
+              >
+                No Data Found !
+              </Title>
+            ) : (
+              currentData?.map((item, index) => {
+                return (
                   <Box
-                    mx="auto"
-                    maw="70px"
-                    px={theme.spacing["2"]}
+                    key={index}
                     sx={{
-                      color: "white",
-                      fontSize: theme.fontSizes["xs"],
-                      fontWeight: 700,
-                      textAlign: "center",
-                      marginTop: theme.spacing["0.5"],
-                      backgroundColor:
-                        item.launch_success == true ? "#198754" : "#DC3545",
-                      borderRadius: theme.spacing["0.5"],
+                      border: "1px solid #CED4DA",
+                      borderRadius: theme.spacing["2"],
+                      padding: theme.spacing["8"],
                     }}
                   >
-                    {item.launch_success == true ? "Success" : "failed"}
+                    <Image
+                      maw={124}
+                      mx="auto"
+                      radius="md"
+                      src={item.links.mission_patch}
+                      alt="Rocket image"
+                    />
+                    <Text
+                      sx={{
+                        color: theme.colors.black[3],
+                        textAlign: "center",
+                        marginTop: theme.spacing["10"],
+                      }}
+                    >
+                      Launch Date:{" "}
+                      <span style={{ color: "#343A40" }}>
+                        {moment(item.launch_date_local).format("DD MMM YYYY")}
+                      </span>
+                    </Text>
+                    <Text
+                      sx={{
+                        color: theme.colors.black[1],
+                        fontSize: theme.fontSizes["2xl"],
+                        fontWeight: 500,
+                        textAlign: "center",
+                        marginTop: theme.spacing["2"],
+                      }}
+                    >
+                      {item.mission_name}
+                    </Text>
+                    <Text
+                      sx={{
+                        color: theme.colors.black[3],
+                        textAlign: "center",
+                        marginTop: theme.spacing["0.5"],
+                      }}
+                    >
+                      {item.rocket.rocket_name}
+                    </Text>
+                    <Text
+                      sx={{
+                        color: theme.colors.black[3],
+                        fontWeight: 500,
+                        textAlign: "center",
+                        marginTop: theme.spacing["8"],
+                      }}
+                    >
+                      Launch Status:
+                    </Text>
+                    <Box
+                      mx="auto"
+                      maw="70px"
+                      px={theme.spacing["2"]}
+                      sx={{
+                        color: "white",
+                        fontSize: theme.fontSizes["xs"],
+                        fontWeight: 700,
+                        textAlign: "center",
+                        marginTop: theme.spacing["0.5"],
+                        backgroundColor:
+                          item.launch_success == true ? "#198754" : "#DC3545",
+                        borderRadius: theme.spacing["0.5"],
+                      }}
+                    >
+                      {item.launch_success == true ? "Success" : "failed"}
+                    </Box>
                   </Box>
-                </Box>
-              );
-            })}
+                );
+              })
+            )}
           </SimpleGrid>
           <Group
             sx={{
@@ -324,6 +399,14 @@ const RocketPage = () => {
               total={totalPages}
             />
           </Group>
+          <Text
+            sx={{
+              textAlign: "center",
+              marginTop: theme.spacing["20"],
+            }}
+          >
+            Created by the brilliant minds behind SpaceX.
+          </Text>
         </Container>
       </Box>
     </>
