@@ -393,6 +393,18 @@ const RocketPage = () => {
             position="center"
           >
             <Pagination
+              sx={{
+                ".mantine-u7eiaa": {
+                  [theme.fn.smallerThan("xs")]: {
+                    minWidth: "1.3rem",
+                  },
+                },
+              }}
+              styles={{
+                control: {
+                  width: "5px",
+                },
+              }}
               color="blue"
               value={activePage}
               onChange={setPage}
