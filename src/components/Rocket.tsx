@@ -11,16 +11,17 @@ import {
   Select,
   Group,
   SimpleGrid,
-  Image,
   Pagination,
   Loader,
 } from "@mantine/core";
-import React, { useRef, useState } from "react";
+import { useRef, useState } from "react";
 
 import moment from "moment";
 
 import { useGetRocket } from "../dataAccess/useGetRocket";
 import { IconSearch } from "../icons/IconSearch";
+import { RocketContext } from "../context/RocketCartContext";
+import RocketCart from "./RocketCart";
 
 const RocketPage = () => {
   const theme = useMantineTheme();
@@ -64,7 +65,7 @@ const RocketPage = () => {
         yesterdayEndOfRange
       );
     } else if (byDate === "year") {
-      const last7DayStart = moment().startOf("day").subtract(4, "year");
+      const last7DayStart = moment().startOf("day").subtract(4, "year"); // there are no data for the last year thats why I keep it as 4 years.
       const yesterdayEndOfRange = moment().endOf("day").subtract(1, "year");
       return moment(item.launch_date_utc).isBetween(
         last7DayStart,
@@ -268,7 +269,7 @@ const RocketPage = () => {
                 data={[
                   { value: "week", label: "Last Week" },
                   { value: "month", label: "Last Month" },
-                  { value: "year", label: "Last Year" },
+                  { value: "year", label: "Last 4 Year" }, // there are no data for the last year thats why I keep it as 4 years.
                 ]}
               />
             </Flex>
@@ -307,80 +308,85 @@ const RocketPage = () => {
             ) : (
               currentData?.map((item, index) => {
                 return (
-                  <Box
-                    key={index}
-                    sx={{
-                      border: "1px solid #CED4DA",
-                      borderRadius: theme.spacing["2"],
-                      padding: theme.spacing["8"],
-                    }}
-                  >
-                    <Image
-                      maw={124}
-                      mx="auto"
-                      radius="md"
-                      src={item.links.mission_patch}
-                      alt="Rocket image"
-                    />
-                    <Text
-                      sx={{
-                        color: theme.colors.black[3],
-                        textAlign: "center",
-                        marginTop: theme.spacing["10"],
-                      }}
-                    >
-                      Launch Date:{" "}
-                      <span style={{ color: "#343A40" }}>
-                        {moment(item.launch_date_local).format("DD MMM YYYY")}
-                      </span>
-                    </Text>
-                    <Text
-                      sx={{
-                        color: theme.colors.black[1],
-                        fontSize: theme.fontSizes["2xl"],
-                        fontWeight: 500,
-                        textAlign: "center",
-                        marginTop: theme.spacing["2"],
-                      }}
-                    >
-                      {item.mission_name}
-                    </Text>
-                    <Text
-                      sx={{
-                        color: theme.colors.black[3],
-                        textAlign: "center",
-                        marginTop: theme.spacing["0.5"],
-                      }}
-                    >
-                      {item.rocket.rocket_name}
-                    </Text>
-                    <Text
-                      sx={{
-                        color: theme.colors.black[3],
-                        fontWeight: 500,
-                        textAlign: "center",
-                        marginTop: theme.spacing["8"],
-                      }}
-                    >
-                      Launch Status:
-                    </Text>
-                    <Box
-                      mx="auto"
-                      maw="70px"
-                      px={theme.spacing["2"]}
-                      sx={{
-                        color: "white",
-                        fontSize: theme.fontSizes["xs"],
-                        fontWeight: 700,
-                        textAlign: "center",
-                        marginTop: theme.spacing["0.5"],
-                        backgroundColor:
-                          item.launch_success == true ? "#198754" : "#DC3545",
-                        borderRadius: theme.spacing["0.5"],
-                      }}
-                    >
-                      {item.launch_success == true ? "Success" : "failed"}
-                    </Box>
+                  // <Box
+                  //   key={index}
+                  //   sx={{
+                  //     border: "1px solid #CED4DA",
+                  //     borderRadius: theme.spacing["2"],
+                  //     padding: theme.spacing["8"],
+                  //   }}
+                  // >
+                  //   <Image
+                  //     maw={124}
+                  //     mx="auto"
+                  //     radius="md"
+                  //     src={item.links.mission_patch}
+                  //     alt="Rocket image"
+                  //   />
+                  //   <Text
+                  //     sx={{
+                  //       color: theme.colors.black[3],
+                  //       textAlign: "center",
+                  //       marginTop: theme.spacing["10"],
+                  //     }}
+                  //   >
+                  //     Launch Date:{" "}
+                  //     <span style={{ color: "#343A40" }}>
+                  //       {moment(item.launch_date_local).format("DD MMM YYYY")}
+                  //     </span>
+                  //   </Text>
+                  //   <Text
+                  //     sx={{
+                  //       color: theme.colors.black[1],
+                  //       fontSize: theme.fontSizes["2xl"],
+                  //       fontWeight: 500,
+                  //       textAlign: "center",
+                  //       marginTop: theme.spacing["2"],
+                  //     }}
+                  //   >
+                  //     {item.mission_name}
+                  //   </Text>
+                  //   <Text
+                  //     sx={{
+                  //       color: theme.colors.black[3],
+                  //       textAlign: "center",
+                  //       marginTop: theme.spacing["0.5"],
+                  //     }}
+                  //   >
+                  //     {item.rocket.rocket_name}
+                  //   </Text>
+                  //   <Text
+                  //     sx={{
+                  //       color: theme.colors.black[3],
+                  //       fontWeight: 500,
+                  //       textAlign: "center",
+                  //       marginTop: theme.spacing["8"],
+                  //     }}
+                  //   >
+                  //     Launch Status:
+                  //   </Text>
+                  //   <Box
+                  //     mx="auto"
+                  //     maw="70px"
+                  //     px={theme.spacing["2"]}
+                  //     sx={{
+                  //       color: "white",
+                  //       fontSize: theme.fontSizes["xs"],
+                  //       fontWeight: 700,
+                  //       textAlign: "center",
+                  //       marginTop: theme.spacing["0.5"],
+                  //       backgroundColor:
+                  //         item.launch_success == true ? "#198754" : "#DC3545",
+                  //       borderRadius: theme.spacing["0.5"],
+                  //     }}
+                  //   >
+                  //     {item.launch_success == true ? "Success" : "failed"}
+                  //   </Box>
+                  // </Box>
+                  <Box key={index}>
+                    <RocketContext.Provider value={item}>
+                      <RocketCart />
+                    </RocketContext.Provider>
                   </Box>
                 );
               })
